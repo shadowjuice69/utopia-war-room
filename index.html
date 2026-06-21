@@ -2835,6 +2835,33 @@ function saveState() {
   syncNewsToSupabase();
 }
 </script>
- <script src="app.js"></script>
+<script src="app.js"></script>
+ <script>
+  // Live Operations Feed Panel Injection
+  const feedDiv = document.createElement('div');
+  feedDiv.className = 'card';
+  feedDiv.style.cssText = 'margin: 20px 0; font-family: monospace; background: #0d1520; border: 1px solid #1e3a5f; border-radius: 6px; padding: 20px;';
+  feedDiv.innerHTML = `
+    <div style="font-family:Georgia,serif; font-size:18px; font-weight:bold; color:#7eb8f7; letter-spacing:1px; margin-bottom:15px; border-bottom:1px solid #1e3a5f; padding-bottom:10px;">⚔️ Live Kingdom Operations Feed</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-bottom: 20px;">
+        <div style="background: #080b10; padding: 10px; border-left: 4px solid #f1c40f; border-radius: 4px; border:1px solid #1e3a5f; border-left-width:4px;"><small style="color: #4a7090; font-weight: bold; display: block; text-transform: uppercase; font-size: 10px;">Gold Plundered</small><span id="stat-gold" style="font-size: 18px; font-weight: bold; color: #7eb8f7;">0</span></div>
+        <div style="background: #080b10; padding: 10px; border-left: 4px solid #9b59b6; border-radius: 4px; border:1px solid #1e3a5f; border-left-width:4px;"><small style="color: #4a7090; font-weight: bold; display: block; text-transform: uppercase; font-size: 10px;">Runes Stolen</small><span id="stat-runes" style="font-size: 18px; font-weight: bold; color: #7eb8f7;">0</span></div>
+        <div style="background: #080b10; padding: 10px; border-left: 4px solid #e74c3c; border-radius: 4px; border:1px solid #1e3a5f; border-left-width:4px;"><small style="color: #4a7090; font-weight: bold; display: block; text-transform: uppercase; font-size: 10px;">Peasants Fireballed</small><span id="stat-fireball" style="font-size: 18px; font-weight: bold; color: #7eb8f7;">0</span></div>
+        <div style="background: #080b10; padding: 10px; border-left: 4px solid #2ecc71; border-radius: 4px; border:1px solid #1e3a5f; border-left-width:4px;"><small style="color: #4a7090; font-weight: bold; display: block; text-transform: uppercase; font-size: 10px;">Op Success Rate</small><span id="stat-success-rate" style="font-size: 18px; font-weight: bold; color: #2ecc71;">0%</span></div>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; color: #c8d6e8;">
+            <thead>
+                <tr style="background-color: #080b10; border-bottom: 2px solid #1e3a5f; color:#7eb8f7;">
+                    <th style="padding: 8px;">Attacker</th><th style="padding: 8px;">Type</th><th style="padding: 8px;">Operation</th><th style="padding: 8px;">Target</th><th style="padding: 8px;">Outcome</th><th style="padding: 8px;">Results</th>
+                </tr>
+            </thead>
+            <tbody id="ops-log-rows"><tr><td colspan="6" style="padding: 20px; text-align: center; color: #4a7090; font-style: italic;">Connecting to live data...</td></tr></tbody>
+        </table>
+    </div>`;
+  const mainTab = document.getElementById('dashboard') || document.querySelector('.tab-content') || document.body;
+  mainTab.appendChild(feedDiv);
+ </script>
+ 
 </body>
 </html>
