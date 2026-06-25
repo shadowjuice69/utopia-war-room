@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔ Utopia War Room — Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #080b10; color: #c8d6e8; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; padding: 20px; max-width: 860px; margin: 0 auto; }
+  h1 { font-family: Georgia, serif; color: #7eb8f7; font-size: 22px; letter-spacing: 2px; margin-bottom: 4px; }
+  h2 { color: #7eb8f7; font-size: 14px; letter-spacing: 1px; border-bottom: 1px solid #1e3a5f; padding-bottom: 5px; margin: 24px 0 10px; }
+  h3 { color: #4ade80; font-size: 12px; margin: 14px 0 6px; }
+  p { color: #c8d6e8; margin-bottom: 8px; }
+  .sub { color: #4a7090; font-size: 11px; margin-bottom: 20px; }
+  .card { background: #0d1520; border: 1px solid #1e3a5f; border-radius: 4px; padding: 14px; margin-bottom: 10px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; margin-right: 4px; font-weight: bold; letter-spacing: 1px; }
+  .badge-green { background: #0a2a0a; border: 1px solid #1a5a1a; color: #4ade80; }
+  .badge-red { background: #2a0a0a; border: 1px solid #5a1a1a; color: #f87171; }
+  .badge-blue { background: #0a1a3a; border: 1px solid #1a3a6a; color: #7eb8f7; }
+  .badge-purple { background: #1a0d2a; border: 1px solid #4a2a6a; color: #a78bfa; }
+  .badge-yellow { background: #2a1a00; border: 1px solid #6a4a00; color: #facc15; }
+  .badge-orange { background: #2a1000; border: 1px solid #6a3000; color: #f97316; }
+  .step { display: flex; gap: 10px; margin-bottom: 8px; }
+  .step-num { background: #1e3a5f; color: #7eb8f7; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; flex-shrink: 0; margin-top: 1px; }
+  .tip { background: #0a1520; border-left: 3px solid #7eb8f7; padding: 8px 12px; margin: 8px 0; font-size: 11px; color: #4a7090; }
+  .tip b { color: #7eb8f7; }
+  .rnw-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .rnw-table th { background: #0a1020; padding: 5px 10px; font-size: 10px; color: #4a7090; letter-spacing: 1px; text-align: left; border-bottom: 1px solid #1e3a5f; }
+  .rnw-table td { padding: 5px 10px; border-bottom: 1px solid #111a24; font-size: 12px; }
+  a { color: #7eb8f7; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .url { color: #4ade80; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<h1>⚔ UTOPIA WAR ROOM</h1>
+<div class="sub">Kingdom Intelligence System — User Guide</div>
+<div class="tip"><b>Live URL:</b> <a href="https://shadowjuice69.github.io/utopia-war-room/" class="url">https://shadowjuice69.github.io/utopia-war-room/</a></div>
+
+<!-- GETTING STARTED -->
+<h2>GETTING STARTED</h2>
+<div class="card">
+  <h3>Creating Your Account</h3>
+  <div class="step"><div class="step-num">1</div><p>Visit the War Room URL above. You'll see the login screen.</p></div>
+  <div class="step"><div class="step-num">2</div><p>Tap <b>SIGN UP</b>, enter your email and a password, then tap <b>CREATE ACCOUNT</b>. Your account is created immediately — no email confirmation needed.</p></div>
+  <div class="step"><div class="step-num">3</div><p>Log in with your email and password. The app remembers you on return visits.</p></div>
+  <div class="tip"><b>Sign Out:</b> Tap the red 🚪 SIGN OUT button in the top-right corner at any time.</div>
+
+  <h3>Joining the Shared Kingdom</h3>
+  <p>The War Room automatically detects which kingdom you belong to. Simply paste your province page (SoT) into the <b>My Kingdom</b> section — the app reads the kingdom number and connects you to the shared kingdom data instantly. Everyone in the same kingdom sees the same data.</p>
+</div>
+
+<!-- TARGET PLANNER -->
+<h2>🎯 TARGET PLANNER</h2>
+<div class="card">
+  <p>The main view — your kingdom on the left, enemy kingdom on the right. Side-by-side comparison of all provinces with RNW (Relative NetWorth) automatically calculated.</p>
+
+  <h3>Loading Data</h3>
+  <p><span class="badge badge-green">MY KINGDOM</span> Tap <b>CSV</b> to upload your kingdom CSV file, or <b>Paste</b> to paste directly from the Utopia kingdom overview page or a single province page (SoT).</p>
+  <p><span class="badge badge-red">ENEMY KD</span> Same options — CSV or Paste. Multiple enemy kingdoms are supported. Each gets its own tab so you can switch between them.</p>
+
+  <h3>RNW Color Guide</h3>
+  <table class="rnw-table">
+    <tr><th>RANGE</th><th>GAINS</th><th>MEANING</th></tr>
+    <tr><td style="color:#ef4444">&lt; 0.567</td><td style="color:#ef4444">0%</td><td>Too small to attack — no land gains</td></tr>
+    <tr><td style="color:#f97316">0.567 – 0.9</td><td style="color:#f97316">1–99%</td><td>Partial gains — smaller target</td></tr>
+    <tr><td style="color:#4ade80">0.9 – 1.1</td><td style="color:#4ade80">100%</td><td>Full gains — ideal target range</td></tr>
+    <tr><td style="color:#facc15">1.1 – 1.6</td><td style="color:#facc15">1–99%</td><td>Partial gains — larger target</td></tr>
+    <tr><td style="color:#ef4444">&gt; 1.6</td><td style="color:#ef4444">0%</td><td>Too large to attack — no land gains</td></tr>
+  </table>
+
+  <h3>Filters</h3>
+  <p><span class="badge badge-blue">✓ Attackable</span> Shows only provinces within your attack range (0.567–1.6 RNW).</p>
+  <p><span class="badge badge-orange">🔥 Fana</span> Filter provinces with Fanaticism.</p>
+  <p><span class="badge badge-purple">💉 BL</span> Filter provinces with Blood Lust.</p>
+
+  <h3>Province Quick View</h3>
+  <p>The dropdown at the top of the page shows all your My Kingdom provinces. Select any one to instantly see their full stats — NW, Offense, Defense, BE, Mana, TPA, WPA, Stealth, Honor, MAP, and active spells.</p>
+</div>
+
+<!-- WAVE PLANNER -->
+<h2>🌊 WAVE PLANNER</h2>
+<div class="card">
+  <p>Plan coordinated attack waves by pairing your attackers with enemy targets. Tracks offense available, defense to break, and leftover offense per assignment.</p>
+
+  <h3>Assigning Attacks</h3>
+  <div class="step"><div class="step-num">1</div><p>In Target Planner, tap a <b>My Kingdom</b> province row — it turns yellow ⚡ (selected as attacker).</p></div>
+  <div class="step"><div class="step-num">2</div><p>Tap an <b>Enemy KD</b> province row — they get paired. The attacker's OP auto-fills.</p></div>
+  <div class="step"><div class="step-num">3</div><p>Keep the attacker selected and tap more enemy rows to assign multiple targets.</p></div>
+  <div class="step"><div class="step-num">4</div><p>Tap the same enemy row again with the same attacker to add a <b>chain hit</b> (🔗×2, ×3 etc.).</p></div>
+  <div class="step"><div class="step-num">5</div><p>Multiple different attackers hitting the same target also counts as a chain.</p></div>
+
+  <h3>After the Attack</h3>
+  <p>Tap <span class="badge badge-green">📋 Result</span> on any wave row and paste the attack result from your Utopia news. The tool automatically extracts acres taken, OP sent, kills, and unit losses — updating both your attacker's remaining OP and the enemy's defense estimate.</p>
+
+  <h3>Attacker Balance</h3>
+  <p>Each attacker shows a live progress bar: how much OP they've sent vs how much they have left. Turns yellow when over 50% used, red when over 80%.</p>
+</div>
+
+<!-- INTEL STORAGE -->
+<h2>📋 INTEL STORAGE</h2>
+<div class="card">
+  <p>Full stats card for every province — both My Kingdom and Enemy. Everything captured from CSV, SoT pastes, or kingdom overview pages is stored here.</p>
+  <p>Each province card shows: NW, Acres, Offense, Defense, BE, Mana, TPA, WPA, Stealth, Honor, MAP, active spells, Fana/BL status, and intel age.</p>
+  <p>Add <b>Notes</b> and set an <b>Ops Status</b> (pending, done, skip, priority) per province — these save automatically.</p>
+</div>
+
+<!-- OPS PLANNER -->
+<h2>✨ OPS PLANNER</h2>
+<div class="card">
+  <p>Tap the <span class="badge badge-purple">✨ Ops</span> button on any enemy province row to open the ops assignment panel.</p>
+  <h3>Three tabs:</h3>
+  <p><b>✨ Spells</b> — All offensive spells. Shows which of your My Kingdom provinces can cast each spell based on their race/personality combo. Tap a province button to assign them to that spell.</p>
+  <p><b>🗡 Sabotage</b> — All thievery sabotage operations. Rogue-only ops only show Rogue provinces, etc.</p>
+  <p><b>🕵 Espionage</b> — Intel operations. All provinces can do these.</p>
+  <p><b>📋 Assigned</b> — Summary of all ops assigned to this target, with remove buttons.</p>
+  <div class="tip"><b>Tip:</b> The Ops button shows a count badge (✨3) when ops are assigned to that province so you can see at a glance which targets have plans.</div>
+</div>
+
+<!-- AGE CHANGES -->
+<h2>📜 AGE CHANGES</h2>
+<div class="card">
+  <p>Track race, personality, unit, and spell changes between ages.</p>
+  <div class="step"><div class="step-num">1</div><p>Tap <b>Load Current Age</b> and paste the current age changes post — supports both the in-game wiki page format and the forum post format. Auto-detected.</p></div>
+  <div class="step"><div class="step-num">2</div><p>Tap <b>Load Next Age</b> and paste the next age changes when they're announced.</p></div>
+  <div class="step"><div class="step-num">3</div><p>The diff view automatically highlights what changed: <span style="color:#4ade80">BUFF</span>, <span style="color:#f87171">NERF</span>, <span style="color:#facc15">NEW</span>, <span style="color:#f97316">REMOVED</span>.</p></div>
+  <p>Filter by: All, Changed Only, Races, Personalities, or Spells.</p>
+</div>
+
+<!-- KINGDOM NEWS -->
+<h2>📰 KINGDOM NEWS</h2>
+<div class="card">
+  <p>Track land taken and lost across all provinces, split by In War vs Out of War.</p>
+  <div class="step"><div class="step-num">1</div><p>Enter your kingdom number (e.g. <b>4:9</b>) in the KD # field.</p></div>
+  <div class="step"><div class="step-num">2</div><p>Tap <b>Paste News</b> and paste your kingdom news page.</p></div>
+  <div class="step"><div class="step-num">3</div><p>The tool automatically detects the war declaration date and splits events into <b>⚔ In War</b> and <b>🕊 Out of War</b> tabs.</p></div>
+
+  <h3>What it tracks:</h3>
+  <p>Per province and per kingdom: Acres Taken, Acres Lost, Net land change, Kills, and total attack count. My Kingdom net is shown in the summary bar at the top. Enemy kingdoms are highlighted separately from other kingdoms.</p>
+  <p>War start and end dates (Utopia calendar dates) are shown at the top of the In War tab.</p>
+  <div class="tip"><b>Tip:</b> You can paste news multiple times — new events are merged in without duplicating existing ones.</div>
+</div>
+
+<!-- SHARED KINGDOM -->
+<h2>🔄 SHARED KINGDOM DATA</h2>
+<div class="card">
+  <p>The War Room syncs data across all kingdom members automatically.</p>
+  <p>When you paste your province page (SoT), the app reads your kingdom number and joins the shared kingdom pool. Everyone else in the same kingdom sees your update in real time — no manual sharing needed.</p>
+  <p><b>Shared between all members:</b> My Kingdom provinces, wave assignments, kingdom news.</p>
+  <p><b>Personal per member:</b> Enemy KD intel, ops assignments, notes.</p>
+</div>
+
+<!-- TIPS -->
+<h2>📡 AUTO-INTEL SETUP</h2>
+<p>The War Room can automatically receive and update your province data every time you visit pages in Utopia. This means your stats, science, buildings, and military update live — no CSV needed.</p>
+
+<h3>What it does</h3>
+<p>When you visit any of these pages in Utopia, your data is automatically sent to the War Room:</p>
+<ul>
+  <li><b>Throne Page</b> — NW, acres, offense, defense, BE, mana%, stealth%, gold, food, runes</li>
+  <li><b>Science Page</b> — TPA, WPA, all science levels</li>
+  <li><b>Military Page</b> — troop counts, off/def points</li>
+  <li><b>Survey Page</b> — building breakdown</li>
+  <li><b>Kingdom News</b> — attack reports and events</li>
+</ul>
+
+<h3>One-time setup (2 minutes)</h3>
+<ol>
+  <li>Go to <b>Utopia → Preferences</b> and scroll to the bottom</li>
+  <li>Find the section <b>"Send intel to your own Intel site"</b> and click it</li>
+  <li>When asked <b>"Enter where to send intel"</b>, paste this URL:<br>
+    <code style="background:#111;padding:4px 8px;border-radius:4px;display:inline-block;margin:6px 0;color:#f5c542;font-size:13px">https://utopia-ops-bot-production.up.railway.app/intel</code>
+  </li>
+  <li>When asked for a <b>password/key</b>, enter:<br>
+    <code style="background:#111;padding:4px 8px;border-radius:4px;display:inline-block;margin:6px 0;color:#f5c542;font-size:13px">NikkoAce</code>
+  </li>
+  <li>Click OK — you're done!</li>
+</ol>
+
+<h3>After setup</h3>
+<p>Just play Utopia normally. Every time you visit your throne page, science, military, or survey, your War Room updates automatically within 2 minutes. No copy-pasting, no CSV needed.</p>
+<p>The <b>📡 Province Intel</b> tab in the Intel Command Center shows everything received — throne stats, science levels, troop counts, and building percentages all in one place.</p>
+
+<h3>Share with kingdom mates</h3>
+<p>Any kingdom mate can do the same setup with the same URL and key. The more members who set it up, the more complete your War Room data becomes — everyone's province info updates live as they play.</p>
+<p><b>Keep the key private</b> — only share it with trusted kingdom members.</p>
+
+<h2>TIPS & SHORTCUTS</h2>
+<div class="card">
+  <p>• <b>CSV upload</b> — accepts any file type on Android (not just .csv). Rename your export if needed.</p>
+  <p>• <b>Province page paste</b> — paste a single SoT to update one province without replacing the whole kingdom.</p>
+  <p>• <b>Intel age</b> — shown in each row. Green = fresh, yellow = hours old, red = days old. Paste a new SoT to refresh.</p>
+  <p>• <b>Export/Import</b> — use the Export button in the header to save a full backup of all your data as a JSON file. Import it back at any time.</p>
+  <p>• <b>Multiple enemy kingdoms</b> — each enemy kingdom gets its own tab. Switch between them by tapping the tab in the Enemy KD section.</p>
+  <p>• <b>Auto-login</b> — the app remembers your session so you don't need to log in every time. Tap 🚪 SIGN OUT to switch accounts.</p>
+</div>
+
+<div style="margin-top:30px;padding-top:14px;border-top:1px solid #1e3a5f;color:#4a7090;font-size:11px;text-align:center">
+  ⚔ Utopia War Room · Kingdom 4:9 — Judo · Built for WoL Age 115
+</div>
+
+</body>
+</html>
