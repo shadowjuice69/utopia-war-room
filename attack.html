@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Kingdom Attacks</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:#080b10; color:#c8d6e8; font-family:'Courier New',monospace; font-size:13px; }
+
+#header { background:#0c1018; border-bottom:1px solid #1e3a5f; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+.logo { font-family:Georgia,serif; font-size:18px; font-weight:bold; color:#7eb8f7; letter-spacing:2px; }
+.sub { font-size:11px; color:#4a7090; margin-top:2px; }
+
+#status-bar { background:#0a0e15; border-bottom:1px solid #1e3a5f; padding:8px 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-size:11px; }
+#fetch-status { color:#4a7090; }
+
+.btn { background:#0d1520; border:1px solid #1e3a5f; color:#c8d6e8; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:11px; font-family:inherit; outline:none; }
+.btn:hover { border-color:#3b82f6; color:#7eb8f7; }
+.btn.danger { color:#f87171; border-color:#f87171; }
+
+#body { padding:16px 20px; }
+
+.card { background:#0d1520; border:1px solid #1e3a5f; border-radius:4px; padding:14px; margin-bottom:12px; }
+.section-title { font-size:11px; color:#4a7090; letter-spacing:2px; margin-bottom:10px; }
+
+.stat-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.stat-box { background:#0a0e15; border:1px solid #1e3a5f; border-radius:4px; padding:8px 14px; min-width:120px; }
+.stat-label { font-size:10px; color:#4a7090; letter-spacing:1px; }
+.stat-val { font-size:18px; font-weight:bold; color:#7eb8f7; margin-top:2px; }
+
+table { width:100%; border-collapse:collapse; font-size:12px; }
+th { background:#0a1020; padding:6px 10px; text-align:left; font-size:10px; color:#4a7090; letter-spacing:1px; border-bottom:1px solid #1e3a5f; }
+td { padding:6px 10px; border-bottom:1px solid #111a24; }
+tr:hover td { background:#0d1825; }
+
+.recent-item { padding:8px 12px; border-bottom:1px solid #111a24; display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:11px; }
+.recent-item:last-child { border-bottom:none; }
+
+canvas { width:100%; height:200px; display:block; }
+
+.empty { text-align:center; padding:30px; color:#4a7090; }
+
+/* Config modal */
+#config-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; }
+#config-modal.show { display:flex; }
+.config-box { background:#0d1520; border:1px solid #2a3a58; border-radius:8px; padding:24px; width:90%; max-width:500px; }
+.config-box h3 { color:#7eb8f7; font-size:14px; margin-bottom:16px; }
+.config-field { margin-bottom:14px; }
+.config-field label { display:block; font-size:10px; color:#4a7090; letter-spacing:1px; margin-bottom:5px; }
+.config-field input { width:100%; background:#080b10; border:1px solid #1e3a5f; color:#c8d6e8; padding:8px 10px; border-radius:3px; font-size:11px; font-family:inherit; outline:none; }
+.config-btns { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <div class="logo"> KINGDOM ATTACKS</div>
+    <div class="sub">Live attack feed from Discord bot</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" onclick="fetchAttacks()"> Refresh</button>
+    <button class="btn" onclick="showConfig()"> Configure</button>
+    <button class="btn danger" onclick="clearCache()"> Clear</button>
+  </div>
+</div>
+
+<div id="status-bar">
+  <span id="fetch-status">Not configured — click  Configure</span>
+</div>
+
+<div id="body">
+  <div class="stat-row" id="summary-stats">
+    <div class="stat-box"><div class="stat-label">TOTAL ATTACKS</div><div class="stat-val" id="stat-attacks">—</div></div>
+    <div class="stat-box"><div class="stat-label">NET ACRES</div><div class="stat-val" id="stat-acres" style="color:#4ade80">—</div></div>
+    <div class="stat-box"><div class="stat-label">TOTAL KILLS</div><div class="stat-val" id="stat-kills" style="color:#fbbf24">—</div></div>
+    <div class="stat-box"><div class="stat-label">TROOPS LOST</div><div class="stat-val" id="stat-lost" style="color:#f87171">—</div></div>
+    <div class="stat-box"><div class="stat-label">PROVINCES</div><div class="stat-val" id="stat-provs">—</div></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title"> ACRES CAPTURED (CUMULATIVE OUTBOUND)</div>
+    <canvas id="atk-chart"></canvas>
+    <div id="chart-empty" class="empty" style="display:none">No data yet</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title"> ATTACKS BY PROVINCE</div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>PROVINCE</th><th>ATTACKS</th><th>NET ACRES</th><th>TROOPS LOST</th><th>KILLS</th><th>PRISONERS</th><th>SPEC CREDS</th><th>PEASANTS</th>
+        </tr></thead>
+        <tbody id="prov-tbody">
+          <tr><td colspan="8" class="empty">No data yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">RECENT ATTACKS</div>
+    <div id="recent-list"><div class="empty">No data yet</div></div>
+  </div>
+</div>
+
+<div id="config-modal">
+  <div class="config-box">
+    <h3> Configure Attack Feed</h3>
+    <div class="config-field">
+      <label>FEED URL (your Discord bot gist — ops_current.log)</label>
+      <input type="url" id="cfg-feed1" placeholder="https://gist.githubusercontent.com/..." />
+    </div>
+    <div class="config-field">
+      <label>FEED 2 URL (optional — second bot feed)</label>
+      <input type="url" id="cfg-feed2" placeholder="https://gist.githubusercontent.com/..." />
+    </div>
+    <div class="config-btns">
+      <button class="btn" onclick="hideConfig()">Cancel</button>
+      <button class="btn" style="border-color:#3b82f6;color:#7eb8f7" onclick="saveConfig()">Save & Refresh</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY_FEED1   = 'atk_feed1_url';
+const KEY_FEED2   = 'atk_feed2_url';
+const KEY_CACHE   = 'atk_cache';
+const KEY_SEEN    = 'atk_seen_ids';
+const REFRESH_MS  = 60 * 1000; 
+
+const MY_KINGDOM_PROVINCES = new Set([
+  "Yama Arashi", "Rstatyi", "Sumi Gaeshi", "Tai-otoshi", "Tomoe-Nage", 
+  "Dojo", "Uchi-mata", "Kekkei Genkai", "Judoku", "Judo Know My Moves", 
+  "Harai-Goshi", "Uki-otoshi", "Doom Wheel", "goshi", "Sake Melodrama", 
+  "Koshi-guruma", "Kumo-gari", "Judo", "flip"
+]);
+
+let attacks   = [];
+let seenIds   = new Set();
+let lastFetch = null;
+let refreshTimer = null;
+
+function showConfig() {
+  document.getElementById('cfg-feed1').value = localStorage.getItem(KEY_FEED1) || '';
+  document.getElementById('cfg-feed2').value = localStorage.getItem(KEY_FEED2) || '';
+  document.getElementById('config-modal').classList.add('show');
+}
+function hideConfig() { document.getElementById('config-modal').classList.remove('show'); }
+function saveConfig() {
+  localStorage.setItem(KEY_FEED1, document.getElementById('cfg-feed1').value.trim());
+  localStorage.setItem(KEY_FEED2, document.getElementById('cfg-feed2').value.trim());
+  hideConfig();
+  fetchAttacks();
+}
+document.getElementById('config-modal').addEventListener('click', function(e) { if (e.target===this) hideConfig(); });
+
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(KEY_CACHE);
+    if (raw) { attacks = JSON.parse(raw); }
+    const ids = localStorage.getItem(KEY_SEEN);
+    if (ids) { seenIds = new Set(JSON.parse(ids)); }
+  } catch(e) {}
+}
+function saveCache() {
+  try {
+    localStorage.setItem(KEY_CACHE, JSON.stringify(attacks));
+    localStorage.setItem(KEY_SEEN, JSON.stringify([...seenIds]));
+  } catch(e) {}
+}
+function clearCache() {
+  if (!confirm('Clear all cached attack data?')) return;
+  attacks = []; seenIds = new Set();
+  localStorage.removeItem(KEY_CACHE); localStorage.removeItem(KEY_SEEN);
+  render();
+}
+
+function parseAttackLine(line, msgId, timestamp) {
+  const cleanLine = line.trim();
+  if (!cleanLine) return null;
+
+  let mm;
+  // 1. Check for standard unknown/unframed incoming hits
+  if ((mm=cleanLine.match(/An unknown province from (.+?)\s*\((\d+:\d+)\)\s+invaded\s+\d+\s*-\s*(.+?)\s*\(4:9\)\s+and\s+(captured|killed|razed)\s+([\d,]+)/i))) {
+    return {
+      id: msgId, timestamp,
+      attackerProvince: 'Unknown',
+      targetProvince: mm[3].trim(),
+      targetKingdom: '4:9',
+      attackerKingdom: mm[2],
+      attackType: mm[4]==='captured'?'Traditional March':mm[4]==='razed'?'Raze':'Massacre',
+      acresCaptured: mm[4]==='captured'?num(mm[5]):null,
+      direction: 'incoming',
+    };
+  }
+
+  // 2. Check for framed incoming invasions/bounces
+  if ((mm=cleanLine.match(/\d+\s*-\s*(.+?)\s*\((\d+:\d+)\)\s+(?:attempted to invade|invaded)\s+\d+\s*-\s*(.+?)\s*\(4:9\)/i))) {
+    return {
+      id: msgId, timestamp,
+      attackerProvince: mm[1].trim(),
+      targetProvince: mm[3].trim(),
+      targetKingdom: '4:9',
+      attackerKingdom: mm[2],
+      attackType: cleanLine.includes('attempted') ? 'Bounce' : 'Traditional March',
+      direction: 'incoming',
+    };
+  }
+
+  // 3. Army returns
+  if (cleanLine.includes('ARMY HOME')) {
+    const am = cleanLine.match(/ARMY HOME\s*>>>\s*(.+?)(?:\s*\[|$)/i);
+    const pName = am ? am[1].trim() : 'Unknown';
+    return {
+      id: msgId, timestamp,
+      attackerProvince: pName,
+      attackType: 'Army Home',
+      direction: 'home',
+    };
+  }
+
+  // 4. Core log entries (Handles outbound or incoming variants safely)
+  // Strips leading icons/emojis up to the known province name token
+  const strippedLine = cleanLine.replace(/^[:\s\wx]+?\b(Yama Arashi|Rstatyi|Sumi Gaeshi|Tai-otoshi|Tomoe-Nage|Dojo|Uchi-mata|Kekkei Genkai|Judoku|Judo Know My Moves|Harai-Goshi|Uki-otoshi|Doom Wheel|goshi|Sake Melodrama|Koshi-guruma|Kumo-gari|Judo|flip)\b/i, '$1');
+  
+  const m = strippedLine.match(/^(.+?)\s+\[[\*_]*(.+?)[\*_]*\]\s+attacked\s+(?:__)?(.+?)(?:__)?(?:\s+\((\d+):(\d+)\))?\s*(?:\|(.*))?$/s);
+  if (!m) return null;
+
+  const attackerProvince = m[1].trim();
+  const targetProvince   = m[3].trim();
+  const targetKingdom    = m[4] && m[5] ? `${m[4]}:${m[5]}` : '';
+  const suffix           = m[6] || '';
+
+  const parts = suffix.split('|').map(s => s.replace(/\*\*/g,'').trim());
+  let acresCaptured=null, troopsLost=null, troopType=null, kills=null, prisoners=null;
+  let specCreds=null, peasants=null, offSent=null, returnVal=null, gens=null;
+  let attackType = 'Traditional March';
+
+  for (const p of parts) {
+    let sm;
+    if ((sm=p.match(/captured:\s*([\d,]+)/i)))       { acresCaptured=num(sm[1]); attackType='Traditional March'; }
+    else if ((sm=p.match(/razed:\s*([\d,]+)/i)))      { acresCaptured=num(sm[1]); attackType='Raze'; }
+    else if ((sm=p.match(/recaptured:\s*[^\d]*([\d,]+)/i))) { acresCaptured=num(sm[1]); attackType='Ambush/Recapture'; }
+    else if ((sm=p.match(/killed:\s*/i)))               { attackType='Massacre'; }
+    else if ((sm=p.match(/learn:\s*([\d,]+)/i)))        { attackType='Learn'; }
+    else if ((sm=p.match(/plundered:\s*([\d,]+)/i)))   { attackType='Plunder'; }
+    else if ((sm=p.match(/bounce:\s*/i)))               { attackType='Bounce'; }
+    else if ((sm=p.match(/loss:\s*[^\d]*([\d,]+)\s*(.+?)(?:\s+and|$)/i))) { troopsLost=num(sm[1]); troopType=sm[2].trim(); }
+    else if ((sm=p.match(/kills?:\s*[^\d]*([\d,]+)(?:\s*\(\+?([\d,]+)\s*prisoners?\))?/i))) {
+      kills=num(sm[1]); if (sm[2]) prisoners=num(sm[2]);
+    }
+    else if ((sm=p.match(/([\d,]+)\s*spec\s*creds?/i)) || (sm=p.match(/spec\s*creds?:\s*([\d,]+)/i))) specCreds=num(sm[1]);
+    else if ((sm=p.match(/([\d,]+)\s*peasants?/i)))       peasants=num(sm[1]);
+    else if ((sm=p.match(/return:\s*([\d.]+)/i)))         returnVal=parseFloat(sm[1]);
+    else if ((sm=p.match(/([\d,]+)off\s*\((\d+)\s*gens?\)/i))) { offSent=num(sm[1]); gens=parseInt(sm[2]); }
+  }
+
+  return {
+    id: msgId, timestamp, attackerProvince, targetProvince, targetKingdom, attackType,
+    acresCaptured, troopsLost, troopType, kills, prisoners, specCreds, peasants, offSent, returnVal, gens
+  };
+}
+
+function num(s) { return parseInt(String(s).replace(/,/g,''), 10); }
+function fmt(n) { return n==null ? '—' : Number(n).toLocaleString(); }
+
+async function fetchFeed(url, label) {
+  const res = await fetch(url, { cache:'no-store' });
+  if (!res.ok) throw new Error(`${label}: HTTP ${res.status}`);
+  const text = await res.text();
+  let added = 0;
+  for (const line of text.split('\n').filter(l=>l.trim())) {
+    let msg;
+    try { msg = JSON.parse(line); } catch(e) { continue; }
+    if (!msg.id || seenIds.has(msg.id)) continue;
+    seenIds.add(msg.id);
+    if (!msg.content) continue;
+    for (const contentLine of msg.content.split('\n')) {
+      const atk = parseAttackLine(contentLine.trim(), msg.id, msg.timestamp);
+      if (atk) { attacks.push(atk); added++; }
+    }
+  }
+  return added;
+}
+
+async function fetchAttacks() {
+  const url1 = (localStorage.getItem(KEY_FEED1)||'').trim();
+  const url2 = (localStorage.getItem(KEY_FEED2)||'').trim();
+  const statusEl = document.getElementById('fetch-status');
+
+  if (!url1 && !url2) {
+    statusEl.textContent = ' No feed configured — click  Configure';
+    statusEl.style.color = '#facc15';
+    return;
+  }
+
+  statusEl.textContent = 'Fetching…'; statusEl.style.color = '#4a7090';
+
+  let totalAdded = 0, errors = [];
+  const feeds = [];
+  if (url1) feeds.push(fetchFeed(url1,'Feed 1').catch(e=>{errors.push(e.message);return 0;}));
+  if (url2) feeds.push(fetchFeed(url2,'Feed 2').catch(e=>{errors.push(e.message);return 0;}));
+  const results = await Promise.all(feeds);
+  totalAdded = results.reduce((a,b)=>a+b,0);
+
+  lastFetch = new Date();
+  saveCache();
+
+  const errTxt = errors.length ? `  ${errors.join(' | ')}` : '';
+  statusEl.textContent = ` ${lastFetch.toLocaleTimeString()} — ${attacks.length} attacks (+${totalAdded} new)${errTxt}`;
+  statusEl.style.color = errors.length ? '#facc15' : '#4ade80';
+
+  render();
+}
+
+function render() {
+  if (!attacks.length) {
+    document.getElementById('stat-attacks').textContent = '0';
+    document.getElementById('stat-acres').textContent   = '0';
+    document.getElementById('stat-kills').textContent   = '0';
+    document.getElementById('stat-lost').textContent    = '0';
+    document.getElementById('stat-provs').textContent   = '0';
+    document.getElementById('prov-tbody').innerHTML = '<tr><td colspan="8" class="empty">No attacks yet</td></tr>';
+    document.getElementById('recent-list').innerHTML = '<div class="empty">No attacks yet</div>';
+    return;
+  }
+
+  const byProv = {};
+  MY_KINGDOM_PROVINCES.forEach(name => {
+    byProv[name] = { name, attacks: 0, acres: 0, lost: 0, kills: 0, prisoners: 0, specCreds: 0, peasants: 0 };
+  });
+
+  let totalNetAcres=0, totalKills=0, totalLost=0, outboundCount=0;
+
+  for (const a of attacks) {
+    // Outbound hit from your KD
+    if (MY_KINGDOM_PROVINCES.has(a.attackerProvince)) {
+      const p = byProv[a.attackerProvince];
+      p.attacks++;
+      outboundCount++;
+      if (a.acresCaptured) { p.acres += a.acresCaptured; totalNetAcres += a.acresCaptured; }
+      if (a.troopsLost)    { p.lost += a.troopsLost; totalLost += a.troopsLost; }
+      if (a.kills)         { p.kills += a.kills; totalKills += a.kills; }
+      if (a.prisoners)     p.prisoners += a.prisoners;
+      if (a.specCreds)     p.specCreds += a.specCreds;
+      if (a.peasants)      p.peasants += a.peasants;
+    }
+    // Inbound hit incoming on your KD
+    if (MY_KINGDOM_PROVINCES.has(a.targetProvince)) {
+      const p = byProv[a.targetProvince];
+      if (a.acresCaptured) { p.acres -= a.acresCaptured; totalNetAcres -= a.acresCaptured; }
+      if (a.troopsLost && !MY_KINGDOM_PROVINCES.has(a.attackerProvince)) { p.lost += a.troopsLost; totalLost += a.troopsLost; }
+    }
+  }
+
+  document.getElementById('stat-attacks').textContent = fmt(outboundCount);
+  document.getElementById('stat-acres').textContent   = fmt(totalNetAcres);
+  document.getElementById('stat-kills').textContent   = fmt(totalKills);
+  document.getElementById('stat-lost').textContent    = fmt(totalLost);
+  
+  let activeProvs = 0;
+  Object.values(byProv).forEach(p => { if (p.attacks > 0 || p.lost > 0 || p.kills > 0) activeProvs++; });
+  document.getElementById('stat-provs').textContent = activeProvs;
+
+  document.getElementById('prov-tbody').innerHTML = Object.values(byProv)
+    .sort((a,b) => b.acres - a.acres)
+    .map(p => {
+      const priTxt = p.prisoners ? ` <span style="color:#4a7090;font-size:10px">(+${fmt(p.prisoners)} pri)</span>` : '';
+      return `<tr>
+        <td style="color:#93c5fd">${esc(p.name)}</td>
+        <td>${p.attacks}</td>
+        <td style="font-weight:bold;color:${p.acres >= 0 ? '#4ade80' : '#f87171'}">${p.acres >= 0 ? '+' : ''}${fmt(p.acres)}</td>
+        <td style="color:#f87171">${fmt(p.lost)}</td>
+        <td style="color:#fbbf24">${fmt(p.kills)}${priTxt}</td>
+        <td>${fmt(p.prisoners)}</td>
+        <td>${fmt(p.specCreds)}</td>
+        <td>${fmt(p.peasants)}</td>
+      </tr>`;
+    }).join('');
+
+  const recent = [...attacks].sort((a,b) => new Date(b.timestamp||0) - new Date(a.timestamp||0)).slice(0,80);
+  document.getElementById('recent-list').innerHTML = recent.map(a => `
+    <div class="recent-item">
+      <span style="color:#4a7090;min-width:60px;font-size:10px">${a.timestamp?new Date(a.timestamp).toLocaleTimeString():''}</span>
+      <span style="color:#93c5fd;font-weight:bold">${esc(a.attackerProvince)}</span>
+      <span style="color:#4a7090"></span>
+      <span style="color:#f87171">${esc(a.targetProvince)}${a.targetKingdom?` <span style="color:#4a7090;font-size:10px">(${esc(a.targetKingdom)})</span>`:''}</span>
+      ${a.acresCaptured!=null?`<span style="color:#4ade80;font-weight:bold">${a.direction==='incoming'?'-':'+'}${fmt(a.acresCaptured)} acres</span>`:''}
+      <span style="color:#4a7090;font-size:10px;border:1px solid #1e3a5f;padding:1px 4px;border-radius:2px">${esc(a.attackType||'')}</span>
+      ${a.kills!=null?`<span style="color:#fbbf24">${fmt(a.kills)} kills</span>`:''}
+      ${a.troopsLost!=null?`<span style="color:#f87171;font-size:10px">-${fmt(a.troopsLost)} ${esc(a.troopType||'troops')}</span>`:''}
+      ${a.offSent!=null?`<span style="color:#4a7090;font-size:10px">${fmt(a.offSent)}off</span>`:''}
+    </div>`).join('');
+
+  setTimeout(renderChart, 50);
+}
+
+function renderChart() {
+  const canvas = document.getElementById('atk-chart');
+  const emptyEl = document.getElementById('chart-empty');
+  if (!canvas) return;
+
+  const withAcres = attacks.filter(a => a.acresCaptured && a.timestamp && MY_KINGDOM_PROVINCES.has(a.attackerProvince)).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+  if (!withAcres.length) { canvas.style.display='none'; emptyEl.style.display='block'; return; }
+  canvas.style.display='block'; emptyEl.style.display='none';
+
+  const W = canvas.parentElement.clientWidth - 28;
+  const H = 200;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  let cum=0;
+  const pts = withAcres.map(a => ({x:new Date(a.timestamp).getTime(), y:(cum+=a.acresCaptured)}));
+  const minX=pts[0].x, maxX=pts[pts.length-1].x, maxY=pts[pts.length-1].y;
+  const pad={l:50,r:16,t:20,b:30};
+  const cx=(x)=>pad.l+(x-minX)/(maxX-minX||1)*(W-pad.l-pad.r);
+  const cy=(y)=>H-pad.b-(y/maxY)*(H-pad.t-pad.b);
+
+  ctx.strokeStyle='#1e3a5f'; ctx.lineWidth=1;
+  for (let i=0;i<=4;i++) {
+    const y=pad.t+i*(H-pad.t-pad.b)/4;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+    ctx.fillStyle='#4a7090'; ctx.font='10px Courier New'; ctx.textAlign='right';
+    ctx.fillText(fmt(Math.round(maxY*(4-i)/4)), pad.l-4, y+4);
+  }
+
+  ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx(pts[0].x), cy(pts[0].y));
+  for (let i=1;i<pts.length;i++) ctx.lineTo(cx(pts[i].x), cy(pts[i].y));
+  ctx.stroke();
+
+  ctx.fillStyle='rgba(59,130,246,0.1)';
+  ctx.beginPath(); ctx.moveTo(cx(pts[0].x),H-pad.b);
+  for (const p of pts) ctx.lineTo(cx(p.x),cy(p.y));
+  ctx.lineTo(cx(pts[pts.length-1].x),H-pad.b); ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle='#4ade80'; ctx.font='bold 11px Courier New'; ctx.textAlign='left';
+  ctx.fillText(fmt(maxY)+' acres', pad.l+4, pad.t+14);
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+loadCache();
+render();
+
+const url1 = localStorage.getItem(KEY_FEED1);
+if (url1) {
+  fetchAttacks();
+  refreshTimer = setInterval(fetchAttacks, REFRESH_MS);
+} else {
+  document.getElementById('fetch-status').textContent = ' No feed configured — click  Configure';
+  document.getElementById('fetch-status').style.color = '#facc15';
+}
+</script>
+</body>
+</html>
